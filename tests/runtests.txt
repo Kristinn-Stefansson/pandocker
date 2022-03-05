@@ -1,0 +1,6 @@
+pandoc 
+make buster-full
+
+docker run --rm -u `id -u`:`id -g` -v `pwd`:/pandoc kristinn/pandocker:buster-full-latest tests/input/pandoc-include/include.md --to markdown --filter pandoc-include  -o tests/input/pandoc-include/complete.md
+
+docker run --rm -u `id -u`:`id -g` -v `pwd`:/pandoc kristinn/pandocker:buster-full-latest tests/input/pandoc-include/include.md --pdf-engine xelatex --to pdf --filter pandoc-include  -o tests/input/pandoc-include/complete.pdf

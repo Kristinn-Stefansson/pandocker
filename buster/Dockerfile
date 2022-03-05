@@ -56,6 +56,7 @@ RUN set -x && \
         wget \
         unzip \
         # panflute requirements
+        python3 \
         python3-pip \
         python3-setuptools \
         python3-wheel \
@@ -203,6 +204,9 @@ ARG LEAFLET_REPO=https://gitlab.com/daamien/pandoc-leaflet-template/raw
 ARG LEAFLET_VERSION=1.0
 RUN wget ${LEAFLET_REPO}/${LEAFLET_VERSION}/leaflet.latex -O ${TEMPLATES_DIR}/leaflet.latex
 
+# RUN apt purge -y python2.7-minimal  && \
+#     ln -s /usr/bin/python3 /usr/bin/python  && \
+#     ln -s /usr/bin/pip3 /usr/bin/pip 
 
 ##
 ## E N D

@@ -19,7 +19,7 @@ initial_setup(){
   # allow all users to write artefacts
   chmod a+rwx $OUT
   # mount a dedicated volume and put the tests files in it
-  docker create --name pandoc-volumes dalibo/pandocker:$TAG
+  docker create --name pandoc-volumes kristinn/pandocker:$TAG
   docker cp tests pandoc-volumes:/pandoc/
 }
 
@@ -28,8 +28,8 @@ setup() {
   export VARIANT=${VARIANT:-}
   log "setup: TAG = $TAG & VARIANT=$VARIANT"
   export DOCKER_OPT="--rm --volumes-from pandoc-volumes "
-  export PANDOC="docker run $DOCKER_OPT dalibo/pandocker:$TAG --verbose"
-  export DIFF="docker run $DOCKER_OPT --entrypoint=diff dalibo/pandocker:$TAG"
+  export PANDOC="docker run $DOCKER_OPT kristinn/pandocker:$TAG --verbose"
+  export DIFF="docker run $DOCKER_OPT --entrypoint=diff kristinn/pandocker:$TAG"
   export IN=tests/input
   export EXP=tests/expected
   export OUT=tests/output
@@ -37,7 +37,7 @@ setup() {
   if [ "${BATS_TEST_NUMBER}" = 1 ];then
     initial_setup
   fi
-}
+
 
 final_teardown() {
   # fetch artefacts
@@ -97,7 +97,7 @@ teardown() {
           -o $OUT/$DIR/emojis.pdf
 }
 
-# Bug #75 : https://github.com/dalibo/pandocker/issues/75
+# Bug #75 : https://github.com/kristinn/pandocker/issues/75
 @test "1442: Generate an HTML file containing weird emojis" {
   DIR=emojis
   $PANDOC $IN/$DIR/magicienletter.md -o $OUT/$DIR/magicienletter.html
@@ -112,7 +112,7 @@ teardown() {
 
 @test "1911: Generate a SVG image with dia" {
     DIR=dia
-    DIA="docker run $DOCKER_OPT --entrypoint dia dalibo/pandocker:$TAG --verbose"
+    DIA="docker run $DOCKER_OPT --entrypoint dia kristinn/pandocker:$TAG --verbose"
     $DIA $IN/$DIR/db.dia --export $OUT/$DIR/db.svg
 }
 

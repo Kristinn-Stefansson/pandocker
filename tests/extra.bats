@@ -19,7 +19,7 @@ initial_setup(){
   # allow all users to write artefacts
   chmod a+rwx $OUT
   # mount a dedicated volume and put the tests files in it
-  docker create --name pandoc-volumes dalibo/pandocker:$TAG
+  docker create --name pandoc-volumes kristinn/pandocker:$TAG
   docker cp tests pandoc-volumes:/pandoc/
 }
 
@@ -28,8 +28,8 @@ setup() {
   export VARIANT=${VARIANT:-}
   log "setup: TAG = $TAG & VARIANT=$VARIANT"
   export DOCKER_OPT="--rm --volumes-from pandoc-volumes "
-  export PANDOC="docker run $DOCKER_OPT dalibo/pandocker:$TAG --verbose"
-  export DIFF="docker run $DOCKER_OPT --entrypoint=diff dalibo/pandocker:$TAG"
+  export PANDOC="docker run $DOCKER_OPT kristinn/pandocker:$TAG --verbose"
+  export DIFF="docker run $DOCKER_OPT --entrypoint=diff kristinn/pandocker:$TAG"
   export IN=tests/input
   export EXP=tests/expected
   export OUT=tests/output
@@ -60,7 +60,7 @@ teardown() {
 }
 
 @test "031: Generate a PDF file using the inline mode" {
-    PANDOC_PDF_BOX=docker run --rm -i dalibo/pandocker:$TAG --to=pdf --pdf-engine=xelatex
+    PANDOC_PDF_BOX=docker run --rm -i kristinn/pandocker:$TAG --to=pdf --pdf-engine=xelatex
     cat $IN/markdown_de.md | $PANDOC_PDF_BOX > $OUT/markdown_de.inline.pdf
 }
 
@@ -80,7 +80,7 @@ teardown() {
           -o $OUT/sample-presentation.reveal.html
 }
 
-# Check bug #18 : https://github.com/dalibo/pandocker/issues/18
+# Check bug #18 : https://github.com/kristinn/pandocker/issues/18
 @test "112: A self-contained reveal presentation built offline" {
   $PANDOC -t revealjs $IN/sample-presentation.md \
           --standalone \
@@ -117,7 +117,7 @@ teardown() {
 
 @test "312: Generate a PDF file using the eisvogel template with xelatex" {
   DOCKER_OPT="--rm --volumes-from pandoc-volumes -u 1000:1000"
-  PANDOC="docker run $DOCKER_OPT dalibo/pandocker:$TAG --verbose"
+  PANDOC="docker run $DOCKER_OPT kristinn/pandocker:$TAG --verbose"
   $PANDOC --pdf-engine=xelatex --template=eisvogel \
           $IN/sample-presentation.md  \
           -o $OUT/sample-presentation.eisvogel.xelatex.pdf
@@ -125,7 +125,7 @@ teardown() {
 
 ## 32x: Letter
 ## Disable until we fix #178
-## https://github.com/dalibo/pandocker/issues/178
+## https://github.com/kristinn/pandocker/issues/178
 #@test "321: Generate a PDF file using the letter template" {
 #  $PANDOC --pdf-engine=xelatex  --template=letter $IN/letter/letter.md -o $OUT/letter.pdf
 #}
@@ -184,6 +184,13 @@ teardown() {
   $PANDOC --pdf-engine=xelatex $IN/$DIR/fonts.md \
           -o $OUT/$DIR/fonts_lato.pdf \
           --variable mainfont="Liberation Serif"
+}
+
+@test "424: Generate a PDF file with the Arial font" {
+  DIR=fonts
+  $PANDOC --pdf-engine=xelatex $IN/$DIR/fonts.md \
+          -o $OUT/$DIR/fonts_arial.pdf \
+          --variable mainfont="Arial.ttf"
 }
 
 
@@ -270,7 +277,7 @@ teardown() {
 }
 
 # Check if there's a version mismatch between crossref and pandoc
-# https://github.com/dalibo/pandocker/issues/207
+# https://github.com/kristinn/pandocker/issues/207
 @test "533: pandoc-crossref version is correct" {
   DIR=pandoc-crossref
   run $PANDOC $IN/$DIR/empty.md \

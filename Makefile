@@ -5,7 +5,7 @@
 ##
 
 # name of the image
-NAME?=dalibo/pandocker
+TAGNAME?=kristinn/pandocker
 
 # By default, the tag is the git branch name
 TAG?=$(shell git branch | grep -e "^*" | cut -d' ' -f 2)
@@ -51,15 +51,15 @@ stretch: stretch/Dockerfile
 	    --build-arg APT_CACHER=$${APT_CACHER-} \
 	    --build-arg PANDOC_VERSION=$(PANDOC_VERSION) \
 	    --build-arg PANDOC_CROSSREF_VERSION=$(CROSSREF_VERSION) \
-	    --tag $(NAME):$@-$(TAG) --file $^ .
+	    --tag $(TAGNAME):$@-$(TAG) --file $^ .
 
 .PHONY: alpine
 alpine: alpine/Dockerfile
-	docker build --tag $(NAME):$@-$(TAG) --file $^ .
+	docker build --tag $(TAGNAME):$@-$(TAG) --file $^ .
 
 .PHONY: alpine-full
 alpine-full: alpine-full/Dockerfile
-	docker build --tag $(NAME):$@-$(TAG) --file $^ .
+	docker build --tag $(TAGNAME):$@-$(TAG) --file $^ .
 
 .PHONY: buster
 buster: buster/Dockerfile
@@ -67,14 +67,14 @@ buster: buster/Dockerfile
 	    $(BUILD_OPT) \
 	    --build-arg PANDOC_VERSION=$(PANDOC_VERSION) \
 	    --build-arg CROSSREF_VERSION=$(CROSSREF_VERSION) \
-	    --tag $(NAME):$@-$(TAG) \
+	    --tag $(TAGNAME):$@-$(TAG) \
 	    --file $^ .
 
 .PHONY: buster-full
 buster-full: buster-full/Dockerfile
 	docker build \
 	    $(BUILD_OPT) \
-	    --tag $(NAME):$@-$(TAG) \
+	    --tag $(TAGNAME):$@-$(TAG) \
 	    --file $^ .
 
 .PHONY: test
@@ -90,17 +90,17 @@ authors:
 
 clean:
 	find tests/output -type f -and -not -name .keep -delete
-	docker rmi $(NAME):$(TAG)
+	docker rmi $(TAGNAME):$(TAG)
 
 warm-cache:
 	./fetch-pandoc.sh $(PANDOC_VERSION) cache/pandoc.deb
 	./fetch-pandoc-crossref.sh $(PANDOC_VERSION) $(PANDOC_CROSSREF_VERSION) cache/pandoc-crossref.tar.gz
-	pip download --dest cache/ --requirement requirements.txt
+	pip3 download --dest cache/ --requirement requirements.txt
 
 alpine_sh alpine-full_sh: #: enter a docker image (useful for testing)
-	docker run --rm -it --volume $(PWD):/pandoc --entrypoint=sh $(NAME):$(@:_bash=)-$(TAG)
+	docker run --rm -it --volume $(PWD):/pandoc --entrypoint=sh $(TAGNAME):$(@:_bash=)-$(TAG)
 
 buster_bash buster-full_bash: #: enter a docker image (useful for testing)
-	docker run --rm -it --volume $(PWD):/pandoc --entrypoint=bash $(NAME):$(@:_bash=)-$(TAG)
+	docker run --rm -it --volume $(PWD):/pandoc --entrypoint=bash $(TAGNAME):$(@:_bash=)-$(TAG)
 
 
