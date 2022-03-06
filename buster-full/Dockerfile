@@ -4,7 +4,7 @@
 # * Emojis
 #    https://github.com/vpetersson/docker-pandoc/blob/master/Dockerfile
 #
-FROM dalibo/pandocker:latest
+FROM dalibo/pandocker:latest-full
 
 # Proxy to APT cacher: e.g. http://apt-cacher-ng.docker:3142
 ARG APT_CACHER
