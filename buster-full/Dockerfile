@@ -19,8 +19,13 @@ RUN apt-get -y update && \
     apt-get -y upgrade && \
     wget http://ftp.de.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.7_all.deb -P /opt && \
     apt-get -y install /opt/ttf-mscorefonts-installer_3.7_all.deb && \
+    wget -O /tmp/YaHei.Consolas.1.12.zip https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/uigroupcode/YaHei.Consolas.1.12.zip && \
+    unzip /tmp/YaHei.Consolas.1.12.zip && \
+    mkdir -p /usr/share/fonts/consolas && \
+    mv YaHei.Consolas.1.12.ttf /usr/share/fonts/consolas/ && \
+    chmod 644 /usr/share/fonts/consolas/YaHei.Consolas.1.12.ttf && \
     fc-cache -vr && \
-    fc-list bus && \
+    fc-list && \
     pip3 --no-cache-dir install --find-links file://${PWD}/cache -r requirements.txt
 
 
